@@ -91,6 +91,29 @@ In this exercise you will:
    * Run `./solutions/sample` and confirm it prints `Hello, PP7!`.
 6. **Explain** in comments or a short README how each stage transforms the code.
 
+   
+1. **Preprocessing (`-E`)**
+   - Command: `gcc -E sample.c -o sample.i`
+   - Expands `#include` and macros.
+   - Output: `sample.i` (pure C code).
+
+2. **Compilation to Assembly (`-S`)**
+   - Command: `gcc -S sample.i -o sample.s`
+   - Converts C to assembly instructions.
+   - Output: `sample.s` (human-readable assembly).
+
+3. **Assembling (`-c`)**
+   - Command: `gcc -c sample.s -o sample.o`
+   - Converts assembly into machine code.
+   - Output: `sample.o` (binary object file).
+
+4. **Linking**
+   - Command: `gcc sample.o -o sample`
+   - Links object file with libraries to create an executable.
+   - Output: `sample` (executable file).
+
+Run with `./sample` to see: **Hello, PP7!**
+
 ---
 
 ### Task 2: Regex Search & Replace in Code
@@ -131,6 +154,13 @@ In this exercise you will:
    vim -c ":%s/printf/debug_printf/g" -c ":wq" solutions/debug_sample.c
    ```
 7. **Explain** each tool’s approach to regex-based search and replace, and when you might prefer one over the others.
+
+| Tool   | Hauptfunktion                            | Vorteile                               | Wann verwenden?                                 |
+| ------ | ---------------------------------------- | -------------------------------------- | ----------------------------------------------- |
+| `grep` | Suchen nach Textmustern                  | Schnell, einfach, zeigt nur Treffer an | Zum Finden von Code oder Funktionen             |
+| `sed`  | Text automatisch ersetzen                | Ideal für Batch-Ersetzungen            | Wenn du viele Dateien automatisch ändern willst |
+| `awk`  | Zeilen filtern und analysieren           | Kann komplexere Logik verarbeiten      | Wenn du Text analysieren oder filtern musst     |
+| `vim`  | Interaktives oder geskriptetes Editieren | Flexibel, mächtig für Einzeldateien    | Wenn du selbst im Code arbeiten möchtest        |
 
 ---
 
@@ -176,6 +206,30 @@ In this exercise you will:
    * The role of `extern` declarations.
    * Why separating compilation can speed up builds.
    * How manual linking differs from letting `gcc` handle all steps in one command.
+
+# Kompilierungsworkflow: geteilte Kompilierung + manuelles Linken
+
+
+
+1. add.c enthält die Funktion `add`, welche zwei Ganzzahlen addiert.
+2. main.c verwendet `add` über eine `extern`-Deklaration:
+   - `extern int add(int, int);` sagt dem Compiler, dass `add` extern definiert ist.
+   - Es informiert den Compiler über Signatur und Existenz, aber nicht über die Implementierung.
+
+3. Kompilierung:
+   - `gcc -c ...` kompiliert jede Datei einzeln zu Objektcode.
+   - Das ist effizient, weil nur geänderte Dateien neu kompiliert werden müssen.
+
+4. Linken:
+   - `gcc file1.o file2.o -o prog` erzeugt die endgültige ausführbare Datei.
+   - Vorteil: Der Linker verbindet alle Symbole, überprüft Aufrufe wie `add`.
+
+🔁 Vergleich zu `gcc main.c add.c -o prog`:
+- Das wäre **Ein-Schritt-Kompilierung**.
+- **Nachteil**: Bei jeder Änderung wird alles neu kompiliert.
+- **Vorteil**: Weniger Befehle, gut für kleine Programme.
+
+Diese Trennung ist wichtig in größeren Projekten, z. B. mit Makefiles.
 
 ---
 
